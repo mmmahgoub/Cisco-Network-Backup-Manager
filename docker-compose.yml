@@ -7,9 +7,7 @@ services:
     ports:
       - "5000:5000"
     volumes:
-      # Persist the SQLite database file so you don't lose added devices
       - db_data:/app
-      # Map the container's backup folder to a physical folder on your host machine
       - ./network_backups:/app/backups
     restart: unless-stopped
 
