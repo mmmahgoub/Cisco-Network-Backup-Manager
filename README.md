@@ -1,82 +1,190 @@
 # Cisco Network Backup Manager
 
-A lightweight, Dockerized web application built with **Flask** and **Netmiko** to automate and manage configuration backups for Cisco network devices. 
+A lightweight, Dockerized web application built with **Flask** and **Netmiko** to automate and manage configuration backups for Cisco network devices.
 
 ## Features
+
 * **Web Interface:** Easily add, view, and manage multiple Cisco devices and credentials.
 * **Isolated Directories:** Automatically organizes backups into individual folders based on the device's hostname.
 * **Timestamped Backups:** Every backup file is stamped with the exact execution date and time (`YYYY-MM-DD_HH-MM-SS`) to prevent overwrites.
-* **Space-Saving Compression:** Instantly compresses text configurations into `.zip` files to drastically optimize disk space.
+* **Space-Saving Compression:** Instantly compresses text configurations into `.zip` files to optimize disk space.
 * **Dockerized Setup:** Fully containerized with persistent storage for configurations and database entries.
 
 ---
 
-## Project Structure
+# Project Structure
+
 ```text
 cisco_backup_app/
 ├── app.py                 # Flask Backend & Netmiko Automation logic
 ├── Dockerfile             # Docker image configuration
-├── docker-compose.yml     # Docker Compose multi-container management
+├── docker-compose.yml     # Docker Compose configuration
 ├── templates/
-│   └── index.html         # Front-end Web UI Bootstrap layout
-└── network_backups/       # Created automatically (Stores your zipped device backups)
+│   └── index.html         # Bootstrap-based web interface
+└── network_backups/       # Automatically created (Stores zipped device backups)
+```
 
-Getting Started (Using Docker Compose)
-The fastest and most reliable way to run this application is using Docker and Docker Compose.
+---
 
-Prerequisites
-Ensure you have the following installed on your machine:
+# Getting Started (Docker Compose)
 
-Docker Desktop
+The fastest and easiest way to run the application is with **Docker Compose**.
 
-Docker Compose
+## Prerequisites
 
-Step 1: Clone or Copy the Repository
-Place all the project files (app.py, Dockerfile, docker-compose.yml, and templates/index.html) into a single directory on your host machine.
+Make sure you have the following installed:
 
-Step 2: Spin Up the Application
-Open your terminal/command prompt in the root of the project directory and execute:
+* Docker Desktop
+* Docker Compose
 
-Bash
+---
+
+## Step 1: Clone the Repository
+
+Clone this repository or copy the following files into a single project directory:
+
+* `app.py`
+* `Dockerfile`
+* `docker-compose.yml`
+* `templates/index.html`
+
+---
+
+## Step 2: Build and Start the Application
+
+Run the following command from the project root:
+
+```bash
 docker-compose up -d --build
-The -d flag runs the container silently in the background, and --build ensures your latest configurations are applied.
+```
 
-Step 3: Access the Web Interface
-Once the container status is healthy, open your preferred web browser and navigate to:
+### Options
 
-Plaintext
+* `-d` → Runs the application in the background.
+* `--build` → Rebuilds the Docker image before starting.
+
+---
+
+## Step 3: Open the Web Interface
+
+After the container starts successfully, open your browser and visit:
+
+```text
 http://localhost:5000
-How to Use
-Add Your Devices: Use the form on the left pane to submit your device specifics (Hostname/Name, Management IP, Platform type, SSH Username, Password, and optional Enable Secret).
+```
 
-Trigger Backup: Click the "Take Backup of All Devices" button.
+---
 
-Retrieve Backups: Check the newly generated network_backups/ folder inside your host project directory. You will find separate directories for each device containing zipped backup configurations.
+# How to Use
 
-Local Development (Without Docker)
-If you prefer to run the application natively on your Python environment, use the steps below:
+### 1. Add Devices
 
-Install Dependencies:
+Fill in the form with:
 
-Bash
+* Device Hostname
+* Management IP Address
+* Platform Type
+* SSH Username
+* SSH Password
+* Enable Secret (optional)
+
+### 2. Start Backup
+
+Click:
+
+> **Take Backup of All Devices**
+
+The application will connect to every configured device via SSH and retrieve its running configuration.
+
+### 3. Retrieve Backups
+
+Backups are saved inside:
+
+```text
+network_backups/
+```
+
+Each device receives its own folder:
+
+```text
+network_backups/
+├── Router1/
+│   ├── Router1_2025-06-20_15-45-21.zip
+│   └── Router1_2025-06-21_09-11-42.zip
+├── Switch1/
+│   └── Switch1_2025-06-20_15-45-28.zip
+```
+
+---
+
+# Local Development (Without Docker)
+
+If you prefer running the application directly with Python:
+
+## Install Dependencies
+
+```bash
 pip install flask netmiko
-Modify app.py for local routing:
-Change the bottom of app.py to allow local debugging:
+```
 
-Python
+---
+
+## Modify `app.py`
+
+At the bottom of `app.py`, ensure the following exists:
+
+```python
 if __name__ == '__main__':
     init_db()
     app.run(debug=True)
-Run the Script:
+```
 
-Bash
+---
+
+## Run the Application
+
+```bash
 python app.py
-Access via http://127.0.0.1:5000
+```
 
-Security Best Practices
-Production Credentials: This tool handles sensitive infrastructure network credentials. In production environments, replace the app.secret_key in app.py with a robust environment variable.
+Open your browser:
 
-Network Access: Ensure the host machine running this container has network/routing access (SSH port 22) to the target device IPs specified in the web UI.
+```text
+http://127.0.0.1:5000
+```
 
-License
-This project is open-source and available under the MIT License.
+---
+
+# Security Best Practices
+
+* **Protect Credentials**
+
+  * Replace `app.secret_key` with a secure environment variable before deploying to production.
+
+* **Network Connectivity**
+
+  * Ensure the machine running the application has SSH (port 22) access to all target Cisco devices.
+
+* **Credential Storage**
+
+  * Avoid storing production credentials directly in source code.
+
+---
+
+# Technologies Used
+
+* Python
+* Flask
+* Netmiko
+* Docker
+* Docker Compose
+* Bootstrap
+* SQLite
+
+---
+
+# License
+
+This project is licensed under the **MIT License**.
+
+Feel free to use, modify, and distribute it according to the terms of the license.
